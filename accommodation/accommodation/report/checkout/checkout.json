@@ -1,0 +1,24 @@
+{
+ "add_total_row": 0, 
+ "creation": "2019-01-17 16:28:02.219194", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-01-17 17:07:58.432387", 
+ "modified_by": "Administrator", 
+ "module": "Accommodation", 
+ "name": "CheckOut", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "query": "select\nbkg.name \"Booking:Link/Accommodation Booking:100\", \nbkgi.room \"Room::100\", \nbkg.guest_name \"Guest::150\", \ng.mobile_no \"Mobile::120\",\nbkg.checked_in \"Checked In:Date:90\", \nbkg.total_amount \"Total Amount:Currency:90\", \nbkg.advance_amount \"Advance Paid:Currency:90\",\nbkg.status \"Status::100\"\nfrom `tabAccommodation Booking` bkg \ninner join `tabAccommodation Booking Item` bkgi on bkgi.parent = bkg.name\ninner join `tabAccommodation Guest` g on g.name = bkg.guest\nwhere bkgi.room is not null \nand (bkg.status = 'Checked In' or bkg.status='Checked Out')\nand bkgi.item_status = 'Checked In'\nand datediff(bkgi.check_out,%(checkout_date)s) >=1", 
+ "ref_doctype": "Accommodation Booking", 
+ "report_name": "CheckOut", 
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
+}

@@ -1,0 +1,270 @@
+{%- macro render_discount_amount(doc) -%}
+{%- if doc.discount_amount -%}
+<div class="row">
+    <div class="col-xs-9 text-right">
+        {{ _("Discount Amount") }}</div>
+    <div class="col-xs-3 text-right">
+        {{ doc.get_formatted("discount_amount", doc) }}
+    </div>
+</div>
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro render_rounding_adjustment(doc) -%}
+{%- if doc.rounding_adjustment -%}
+<div class="row">
+    <div class="col-xs-9 text-right">
+        {{ _("Round Off Amount") }}</div>
+    <div class="col-xs-3 text-right">
+        {{ doc.get_formatted("rounding_adjustment", doc) }}
+    </div>
+</div>
+{%- endif -%}
+{%- endmacro -%}
+
+<style>
+    .invoice-title {
+        text-align: center
+    }
+
+    .invoice-title h2,
+    .invoice-title h3 {
+        margin-top: 0px;
+        display: inline-block;
+    }
+
+    .table {
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+
+    .table>tbody>tr>.no-line {
+        border-top: 0px;
+        border-top: 0px;
+    }
+
+    .table>thead>tr>.no-line {
+        border-bottom: 0px;
+        border-top: 0px;
+    }
+
+    .table>tbody>tr>.thick-line {
+        border-top: 2px solid;
+    }
+
+    .panel-body {
+        padding-bottom: 0px;
+        padding-top: 0px;
+    }
+
+    .print-format {
+        margin-top: 0mm;
+        margin-left: 0mm;
+        margin-right: 0mm;
+    }
+
+    .hr {
+        margin-block-start: 0em !important;
+        margin-block-end: 0em !important;
+    }
+</style>
+
+{% set letter_head = frappe.get_doc('Letter Head', {"is_default" : 1}) %}
+{% set sales_order = "" if not doc.items else doc.items[0].sales_order %}
+{% set po_date = doc.po_date %}
+{% if not po_date and sales_order %}
+{% set po_date = frappe.db.get_value("Sales Order",sales_order,"po_date") %}
+{% set po_date = po_date.strftime('%d-%m-%Y') if po_date else None %}
+{% endif %}
+{% set po_no = doc.po_no %}
+{% set hotel_items_html = doc.hotel_items_html or "No items" %}
+
+{% set reservation = frappe.db.get_value("Accommodation Booking", "doc.invoice", fieldname=["guest_name","name", "mobile_no"], as_dict=1) %}
+
+{% set guest = frappe.db.get_value("Accommodation Guest", filters={"full_name":"doc.name"}, fieldname=["mobile_no", "email", "full_name", "address_1", "address_2", "city", "state", "country"], as_dict=1) %}
+
+{% if not po_no and sales_order %}
+{% set po_no = frappe.db.get_value("Sales Order",sales_order,"po_no") %}
+{% endif %}
+
+<div class="container" style="width: auto;font-size: 11px;">
+    <div class="letter-head">
+        {{ letter_head.content }}
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12">
+            <div class="invoice-title">
+                <h2>TAX INVOICE </h2>
+                <span style="float:right;margin-top:110px;">{% block copy_name %}{% endblock %}</span>
+            </div>
+
+            <div class="row">
+
+                <div class="col-xs-6 col-md-6 col-lg-6">
+                    <div>
+                        <strong>Billed To:</strong> {{ doc.customer }}
+
+                    </div>
+                    <div>
+                        <strong>Purpose of Visit:</strong> {% if doc.package in ["Mahatma", "Member", "Sharing"] %} {{ _("For attend satsang") }} {% endif %} 
+                        {% if doc.package == "Non Mahatma" %}{{ _("For visit temple") }} {% endif %}
+                    </div>
+                    <div> <strong>Guest Name:</strong> {{ reservation.guest_name }}
+                    </div>
+                    <div>
+                        <address>
+                            <strong>Address:</strong>
+                            <br> {{ guest.address_1 }}
+                        </address>
+
+                    </div>
+
+                </div>
+                <div class="col-xs-5 col-md-5 col-lg-5">
+                    <div> <strong>INV No.:</strong> {{ doc.name }}
+                    </div>
+                    <div> <strong>INV Date:</strong> {{ doc.posting_date }}
+                    </div>
+                    <div>
+                        {% if doc.customer_gstin %}
+                        <strong>Customer GSTIN:</strong> {{ doc.customer_gstin }}
+                        {% endif %}
+                    </div>
+                    <div><strong>Phone:</strong> {{ guest.mobile_no }}
+                    </div>
+                    <div> {% if guest.email %}
+                        <strong>Email:</strong> {{ guest.email }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12">
+            <!-- {{ hotel_items_html }} -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class=" col-lg-12 col-md-12 col-sm-12 description">
+                            <div class="table-responsive">
+                                <table class="table table-condensed cart no-border">
+                                    <thead>
+                                        <tr>
+                                            <td class="text-center">
+                                                <strong>Perticulars</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <strong>No. of Room/Beds</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <strong>Days</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>Amount</strong>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in room_items %}
+                                        <tr>
+                                            <td class="text-left">{{row.room}}</td>
+                                            <td class="text-left">
+                                                <strong>{{ frappe.utils.format_datetime(row.checkin_date, "d-MMM-Y HH:mm") }}</strong>
+                                            </td>
+                                            <td class="text-left">
+                                                <strong>{{ frappe.utils.format_datetime(row.checkout_date, "d-MMM-Y HH:mm") or ""
+                                                    }}</strong>
+                                            </td>
+                                            <td class="text-center"><strong>{{ frappe.utils.cint(row.no_days) }}</strong></td>
+                                            <td class="text-right"><strong>{{ frappe.utils.fmt_money(row.amount, currency="INR") }}</strong></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+            
+            
+                        </div>
+                    </div>
+            
+                    <!-- <div class="row">
+                        <div class="tax-net-total-row">
+                            <hr>
+                            <div class="col-xs-9 pull-left text-right strong;" >{{ _("Total Room Rent") }}</div>
+                            <div class="col-xs-3 text-right">
+                                {{ frappe.utils.fmt_money(doc.total, currency="INR") }}
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-right:10px;padding-bottom:25px;">
+        <!-- Totals-->
+        {% if doc.taxes %}
+        <div class="row">
+            <div class="tax-net-total-row" style="margin-top: 0px; margin-bottom: 0px;">
+                <div class="col-xs-9 pull-left text-right">{{ _("Taxable Total") }}</div>
+                <div class="col-xs-3 text-right">
+                    {{ doc.get_formatted("base_total") }}</div>
+            </div>
+        </div>
+        {% endif %}
+        {% for d in doc.taxes %}
+        {% if d.base_tax_amount > 0 %}
+        <div class="row tax-row">
+            <div class="col-xs-9 pull-left text-right">{{ d.description }}</div>
+            <div class="col-xs-3 text-right">
+                {{ d.get_formatted("base_tax_amount") }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {{ render_discount_amount(doc) }}
+        {{ render_rounding_adjustment(doc) }}
+
+        <div class="row tax-grand-total-row">
+            <div class="col-xs-9 pull-left text-right text-uppercase text-muted">{{ _("Grand Total") }}</div>
+            <div class="col-xs-3 text-right">
+                <span class="tax-grand-total bold">
+                    {{ doc.get_formatted("rounded_total") }}
+                </span>
+            </div>
+        </div>
+        <!-- End Totals-->
+        <div class="row">
+            <div class="col-xs-8">
+                <address>
+                    <strong>Amount in words: </strong><strong class="font-size:12px;">{{ doc.in_words }}</strong>
+                </address>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-lg-12">
+                {{ doc.other_charges_calculation}}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-8">
+                <strong>Manager/Receptionist</strong>
+                <br><br>____________________
+            </div>
+            <div class="col-xs-4">
+                <div class="text-center panel-heading">
+                    <strong>Guest Signature</strong>
+                    <br><br>____________________
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-html" class="visibl-e-pdf">
+        <div class="letter-head-footer">
+            {{ letter_head.footer }}
+        </div>
+    </div>
+</div>

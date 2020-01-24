@@ -1,0 +1,79 @@
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_conditional %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_datetime %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_money %}
+
+
+{% block base %}
+{% include "templates/includes/accommodation_invoice_base.html" %}
+{% endblock %}
+
+<div class="container" style="width: auto;font-size: 9px!important;">
+    <div class="row">
+        <div class="invoice-title">
+            <h2>{{ doc.header_title }}</h2>
+        </div>
+    </div>
+    <table class="table table-condensed no-border" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td> <b> Activity Center: </b> {{ doc.company}} </td>
+            <td> <b> Date: </b> {{ doc.date}} </td>
+        </tr>
+    </table>
+    <br><br>
+
+
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class=" col-lg-12 col-md-12 col-sm-12 description">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td class="">
+                                                <strong>Date</strong>
+                                            </td>
+                                            <td class="">
+                                                <strong>Invoice</strong>
+                                            </td>
+                                            <td class="">
+                                                <strong>Inst By</strong>
+                                            </td>
+                                            <td class="">
+                                                <strong>Remarks</strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong>Amount</strong>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in doc.invoices %}
+                                        <tr>
+                                            <td class="text-left">{{ render_datetime(row.posting_date) }}</td>
+                                            <td class="text-left">
+                                                {{ row.name }}
+                                            </td>
+                                            <td class="text-left">
+                                                {{ row.customer_name }}
+                                            </td>
+                                            <td class="text-center">{{ row.remarks }}</td>
+                                            <td class="text-right"> {{ render_money(row.rounded_total) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>{{_("The voucher will be approved in 7 days if there are no discrepancies.")}}:</p>
+<p>{{_("Thank you")}}</p>

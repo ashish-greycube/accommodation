@@ -1,0 +1,34 @@
+{
+ "add_total_row": 0, 
+ "creation": "2019-02-25 23:17:15.516979", 
+ "disable_prepared_report": 0, 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-02-28 07:39:29.659242", 
+ "modified_by": "Administrator", 
+ "module": "Accommodation", 
+ "name": "Billing", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "query": "select res.name \"Booking:Link/Accommodation Booking:120\", res.guest_name \"Guest::150\", res.checked_in \"CheckIn:Date:80\",\nres.checked_out \"CheckOut:Date:80\", coalesce(si.name,'') \"Invoice:Link/Sales Invoice:120\", si.status \"Status::40\",\ncoalesce(res.total_amount,0) \"BillingAmt:Currency:110\", coalesce(res.advance_amount,0) \"Advance Paid:Currency:110\", \ncoalesce(res.total_amount,0)-coalesce(res.advance_amount,0) \"Outstanding:Currency:110\",\nres.status \"BookingStatus::30\",\ncase when res.checked_in < res.checked_out then datediff(res.checked_out, res.checked_in) else 1 end \"Nights:Data:40\"\nfrom `tabAccommodation Booking` res\nleft outer join `tabSales Invoice` si on si.name = res.invoice\nwhere res.status not in ('Booked', 'Cancelled') and res.company = %(company)s\norder by res.checked_out", 
+ "ref_doctype": "Accommodation Booking", 
+ "report_name": "Billing", 
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }, 
+  {
+   "role": "Hotel Reservation User"
+  }, 
+  {
+   "role": "Hotel Manager"
+  }, 
+  {
+   "role": "Analytics"
+  }
+ ]
+}

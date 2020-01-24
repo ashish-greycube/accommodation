@@ -1,0 +1,31 @@
+{
+ "add_total_row": 0, 
+ "creation": "2019-02-25 23:01:45.898416", 
+ "disable_prepared_report": 0, 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-02-27 13:19:01.106336", 
+ "modified_by": "Administrator", 
+ "module": "Accommodation", 
+ "name": "Occupancy", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "query": "select b.name \"Booking:Link/Accommodation Booking:120\", b.guest_name \"Guest::190\", i.check_in \"From:Date:90\", i.check_out \"To:Date:90\", i.room \"Room::60\", i.item_status \"RoomStatus::90\", i.room_type \"Room Type::80\",b.status \"BookingStatus::90\"\nfrom `tabAccommodation Booking` b INNER JOIN `tabAccommodation Booking Item` i ON i.parent = b.name\nwhere b.company = %(company)s and 1 = case \nwhen %(report)s = 'Checked In' \nand i.item_status='Checked In' then 1\nwhen %(report)s = 'Today Check Out'\nand b.status = 'Checked In' and i.item_status = 'Checked Out' and i.check_out = %(today)s then 1\nwhen %(report)s = 'Today Arrival'\nand i.item_status = 'Reserved' and i.check_in = %(today)s then 1\nwhen %(report)s = 'Future Booking'\nand b.status = 'Booked' and i.item_status = 'Reserved' \nand i.check_in >= %(from_date)s and check_out <= %(to_date)s then 1\nwhen %(report)s = 'Completed'\nand b.status not in ('Booked','Checked In') and i.check_in >= %(from_date)s and i.check_out <= %(to_date)s then 1\nelse 0 end \norder by i.check_in, i.check_out, b.guest_name", 
+ "ref_doctype": "Accommodation Booking", 
+ "report_name": "Occupancy", 
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }, 
+  {
+   "role": "Hotel Reservation User"
+  }, 
+  {
+   "role": "Hotel Manager"
+  }
+ ]
+}

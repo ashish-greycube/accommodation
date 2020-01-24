@@ -1,0 +1,38 @@
+<table class="table table-bordered small">
+    <thead>
+        <tr>
+            <td style="width: 5%">&nbsp;</td>
+            <td style="width: 5%">{{ __("Refund") }}</td>
+            <td style="width: 10%">{{ __("Date") }}</td>
+            <td style="width: 10%">{{ __("Entry") }}</td>
+            <td style="width: 50%">{{ __("Party") }}</td>
+            <td style="width: 10%" class="text-right">{{ __("Amount") }}</td>
+            <td style="width: 10%" class="text-right">{{ __("Owner") }}</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for je in payments %}
+        <tr>
+            <td>
+                <a class="text-muted no-decoration receipt-print-link" data-name="{{je.name}}"><i class="fa fa-print"></i></a>
+            </td>
+            <td> <input type="checkbox" disabled="disabled" {% if je.is_refund===1 %} checked {% endif %}> </td>
+            <td>
+                {{je.posting_date}}
+            </td>
+            <td>
+                <a class="invoice-link" href="#Form/Journal Entry/{{je.name}}"> {{ je.name }}</a>
+            </td>
+            <td>
+                {{ je.pay_to_recd_from }}
+            </td>
+            <td class="text-right">
+                {{ format_currency(je.total_amount, je.total_amount_currency, 2) }}
+            </td>
+            <td class="text-right">
+                {{je.owner}}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

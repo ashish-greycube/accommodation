@@ -1,0 +1,278 @@
+{% set letter_head = frappe.get_doc("Letter Head", {"is_default" : 1}) %}
+{% set bkg_doc = frappe.get_doc("Accommodation Booking", {"invoice" : doc.name}) %}
+{% set guest_doc = frappe.get_doc("Accommodation Guest", {"name":bkg_doc.guest}) %}
+{% set print_doc = bkg_doc.get_print_doc() %}
+
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_conditional %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_datetime %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_money %}
+
+{% block base %}
+{% include "templates/includes/accommodation_invoice_base.html" %}
+{% endblock %}
+
+
+
+<div class="container" style="width: auto;font-size: 11px;">
+    <div class="letter-head">
+        {{ letter_head.content }}
+        <div style="text-align: center; margin-top: 0 0 0 0; font-size: 16px;">
+                <strong>{{ doc.company }}</strong>
+        </div>
+    </div>
+    <br>
+    <!--done-->
+    <div class="row">
+        <div class=" col-xs-6 col-md-6 col-lg-6">
+            <div class="table-responsive">
+                <table class="table table-condensed cart no-border">
+                    <colgroup>
+                        <col width="130px">
+                        <col width="400px">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="text-right bold">
+                                Bill No:
+                            </td>
+                            <td class="text-left bold">
+                                {{ doc.name }}
+                            </td>
+                        </tr>
+                        {% if doc.customer != "Darshanarthi" %}
+                        <tr>
+                            <td class="text-right bold">
+                                Bill To:
+                            </td>
+                            <td class="text-left">
+                                {{ doc.customer }}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="text-right bold">
+                                Guest Name:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.full_name }}
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Mobile:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.mobile_no }}
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Address:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.address }}
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="col-xs-6 col-md-6 col-lg-6">
+            <div class="table-responsive" style="border-left:1px solid grey">
+                <table class="table table-condensed cart no-border">
+                    <colgroup>
+                        <col width="130px">
+                        <col width="400px">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="text-right bold"> Date:</td>
+                            <td class="text-left bold">{{ render_datetime(doc.posting_date)}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Booking ID:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.name }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Arrival:
+                            </td>
+                            <td class="text-left">
+                                {{ render_datetime(print_doc.checked_in) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Departure:
+                            </td>
+                            <td class="text-left">
+                                {{ render_datetime(print_doc.checked_out) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                No of Persons:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.pax }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right bold">
+                                Rooms:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.rooms }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="text-right bold">
+                                Purpose:
+                            </td>
+                            <td class="text-left">
+                                {{ print_doc.purpose_of_visit }}
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- end header -->
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-lg-12">
+            <!-- {{ hotel_items_html }} -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class=" col-lg-12 col-md-12 col-sm-12 description">
+                            <div class="table-responsive">
+                                <table class="table table-condensed cart no-border">
+                                    <colgroup>
+                                        <col width="40%">
+                                        <col width="10%">
+                                        <col width="10%">
+                                        <col width="10%">
+                                        <col width="15%">
+                                        <col width="15%">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <td class="bold">
+                                                Particulars
+                                            </td>
+                                            <td class="bold">
+                                                Days
+                                            </td>
+                                            <td class="bold">
+                                                Rooms
+                                            </td>
+                                            <td class="text-right bold">
+                                                Qty
+                                            </td>
+                                            <td class="text-right bold">
+                                                Rate
+                                            </td>
+                                            <td class="text-right bold">
+                                                Amount
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in print_doc.room_items %}
+                                        <tr>
+                                            <td class="">{{row.particulars}}</td>
+                                            <td class="">{{ row.days or "" }}</td>
+                                            <td class="">{{row.room_count or "" }}</td>
+                                            <td class="text-right">{{row.qty or "" }}</td>
+                                            <td class="text-right">{{ render_money(row.rate) }}</td>
+                                            <td class="text-right"> {{ render_money(row.amount) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td colspan="3"></td>
+                                            <td class="text-left bold" colspan="2">Grand Total</td>
+                                            <td class="text-right bold">{{ doc.get_formatted("rounded_total") }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- <div class="row">
+                                <div class="tax-net-total-row">
+                                    <hr>
+                                    <div class="col-xs-9 pull-left text-right strong;" >{{ _("Total Room Rent") }}</div>
+                                    <div class="col-xs-3 text-right">
+                                        {{ frappe.utils.fmt_money(doc.total, currency="INR") }}
+                                    </div>
+                                </div>
+                            </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-right:10px;padding-bottom:25px;">
+        <!-- Totals-->
+        <!-- <div class="row tax-grand-total-row">
+            <div class="col-xs-9 pull-left text-right text-uppercase text-muted">{{ _("Grand Total") }}</div>
+            <div class="col-xs-3 text-right">
+                <span class="tax-grand-total bold">
+                    {{ doc.get_formatted("rounded_total") }}
+                </span>
+            </div>
+        </div> -->
+        <!-- End Totals-->
+        <div class="row">
+            <div class="col-xs-8">
+                <address>
+                    <strong>Amount in words: </strong>{{ doc.in_words }}
+                </address>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-12 col-lg-12">
+                {{ render_money(doc.other_charges_calculation) }}
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-xs-8">
+               <strong>Manager/Receptionist</strong>
+                <br><br><br>____________________
+            </div>
+            <div class="col-xs-4">
+                <strong>Guest Signature</strong>
+                    <br><br><br>____________________
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-html" class="visibl-e-pdf">
+        <div class="letter-head-footer">
+                <div style="text-align: center; margin-top: 0; font-size: 15px; background-color: bisque;">
+                       <strong>Mobile:</strong> {{ frappe.db.get_value("Company", frappe.db.get_value("Sales Invoice",doc.name, "company"), "phone_no") }} 
+                      &nbsp; &nbsp; &nbsp; <strong>Phone:</strong> {{ frappe.db.get_value("Company", frappe.db.get_value("Sales Invoice",doc.name, "company"), "fax") }} 
+                </div>
+        </div>
+            {{ letter_head.footer }}
+    </div>
+    </div>
+
+
+</div> <!-- container end-->

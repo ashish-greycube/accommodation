@@ -1,0 +1,30 @@
+{
+ "content": null, 
+ "creation": "2019-01-26 13:22:47.201784", 
+ "docstatus": 0, 
+ "doctype": "Page", 
+ "icon": "fa fa-clock", 
+ "idx": 0, 
+ "modified": "2019-02-26 04:09:12.587162", 
+ "modified_by": "Administrator", 
+ "module": "Accommodation", 
+ "name": "room-management", 
+ "owner": "Administrator", 
+ "page_name": "Room Management", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }, 
+  {
+   "role": "Hotel Reservation User"
+  }, 
+  {
+   "role": "Hotel Manager"
+  }
+ ], 
+ "script": null, 
+ "standard": "Yes", 
+ "style": null, 
+ "system_page": 0, 
+ "title": "Room Management"
+}

@@ -1,0 +1,27 @@
+{
+ "add_total_row": 0, 
+ "creation": "2019-02-25 23:48:54.072126", 
+ "disable_prepared_report": 0, 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-02-25 23:48:54.072126", 
+ "modified_by": "Administrator", 
+ "module": "Accommodation", 
+ "name": "Hotel Analytics", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "ref_doctype": "Accommodation Booking", 
+ "report_name": "Hotel Analytics", 
+ "report_type": "Script Report", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }, 
+  {
+   "role": "Hotel Manager"
+  }
+ ]
+}

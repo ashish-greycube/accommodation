@@ -1,0 +1,178 @@
+{% set letter_head = frappe.get_doc("Letter Head", {"is_default" : 1}) %}
+{% set bkg_doc = frappe.get_doc("Accommodation Booking", {"name" : doc.accommodation_booking}).get_receipt_print() %}
+
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_conditional %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_datetime %}
+{% from "accommodation/templates/includes/accommodation_invoice_base.html" import render_money %}
+{% set money_in_words = frappe.utils.money_in_words %}
+
+{% block base %}
+{% include "templates/includes/accommodation_invoice_base.html" %}
+{% endblock %}
+
+<div class="container" style="width: auto;font-size: 11px;border:2px double #cccccc;margin: 8px;">
+    <div class="letter-head text-center">
+        {{ letter_head.content }}
+        <div style="text-align: center; margin-top: 0; font-size: 16px;">
+            <strong>{{ doc.company }}</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" col-lg-12 col-md-12 col-sm-12 description">
+            <div class="text-center" style="margin:12px">
+                <span style="background-color:#cccccc;font-size:18px;padding: 8px;">Deposit Receipt</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-condensed cart no-border">
+                    <colgroup>
+                        <col width="110px">
+                        <col width="800px">
+                        <col width="100px">
+                        <col width="150px">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="text-right">
+                                <strong>Receipt No:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ doc.name }}</strong>
+                            </td>
+                            <td class="text-right bold"> Date:</td>
+                            <td class="text-left bold">{{ render_datetime(doc.posting_date)}}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">
+                                <strong>Txn ID:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ doc.accommodation_booking }}</strong>
+                            </td>
+                            <td class="text-right">
+                                <strong>Arrival:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ render_datetime(bkg_doc.checked_in) }}</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">
+                                <strong>Name:</strong>
+                            </td>
+                            <td class="text-left">
+                                {{ bkg_doc.full_name }}
+                            </td>
+                            {% if bkg_doc.checked_out %}
+                            <td class="text-right">
+                                <strong>Departure:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ render_datetime(bkg_doc.checked_out) }}</strong>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        <tr>
+
+                            <td class="text-right">
+                                <strong>Mobile:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ bkg_doc.mobile_no}}</strong>
+                            </td>
+
+                            <td class="text-right">
+                                <strong>No Persons:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{bkg_doc.pax}}</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">
+                                <strong>Address:</strong>
+                            </td>
+                            <td class="text-left">
+                                {{bkg_doc.address}}
+                            </td>
+                            <td class="text-right">
+                                <strong>Room No:</strong>
+                            </td>
+                            <td class="text-left">
+                                {{bkg_doc.rooms}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-bottom:50px;">&nbsp;</div>
+
+    <!-- Amounts section -->
+    <div class="row">
+        <div class=" col-lg-12 col-md-12 col-sm-12 description">
+            <div class="table-responsive">
+                <table class="table table-condensed cart no-border">
+                    <colgroup>
+                        <col width="90px">
+                        <col width="90px">
+                        <col width="160px">
+                        <col width="650px">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="text-right">
+                                <strong>Amount:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong> {{ render_money(doc.total_credit) }} </strong>
+                            </td>
+                            <td class="text-right">
+                                <strong>Amount in words:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong>{{ money_in_words(doc.total_credit) }}</strong>
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td class="text-right">
+                                    <strong>Mode of Payment:</strong>
+                            </td>
+                            <td class="text-left">
+                                <strong> {{ doc.mode_of_payment }} </strong>
+                            </td>
+                        </tr> -->
+                        <tr>
+                            <td colspan="4"> Remarks: {{ bkg_doc.remarks }}
+                                {% if doc.cheque_no %} <br> Cheque No: {{ doc.cheque_no }} Dtd: {{ doc.cheque_date }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-left"> Guest Signature:</td>
+                            <td colspan="2" class="text-right"> Receiver's Signature</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="footer-html" class="visibl-e-pdf">
+        <div class="letter-head-footer text-center">
+            <div style="text-align: center; margin-top: 0; font-size: 15px; background-color: bisque;">
+                Mobile:
+                {{ frappe.db.get_value("Company", frappe.db.get_value("Journal Entry",doc.name, "company"), "phone_no") }}
+                Phone:
+                {{ frappe.db.get_value("Company", frappe.db.get_value("Journal Entry",doc.name, "company"), "fax") }}
+            </div>
+            {{ letter_head.footer }}
+        </div>
+    </div>
+
+
+</div> <!-- container end-->

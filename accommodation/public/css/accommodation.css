@@ -1,0 +1,12 @@
+.item-checked_in {
+    background-color:  lightgreen
+}
+
+.item-checked_out {
+    background-color:  palegoldenrod
+}
+
+.item-cancelled {
+    background-color:  indianred
+}
+

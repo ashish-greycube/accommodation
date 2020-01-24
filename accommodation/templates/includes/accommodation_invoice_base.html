@@ -1,0 +1,101 @@
+{%- macro render_discount_amount(doc) -%}
+{%- if doc.discount_amount -%}
+<div class="row">
+    <div class="col-xs-9 text-right">
+        {{ _("Discount Amount") }}</div>
+    <div class="col-xs-3 text-right">
+        {{ doc.get_formatted("discount_amount", doc) }}
+    </div>
+</div>
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro render_rounding_adjustment(doc) -%}
+{%- if doc.rounding_adjustment -%}
+<div class="row">
+    <div class="col-xs-9 text-right">
+        {{ _("Round Off Amount") }}</div>
+    <div class="col-xs-3 text-right">
+        {{ doc.get_formatted("rounding_adjustment", doc) }}
+    </div>
+</div>
+{%- endif -%}
+{%- endmacro -%}
+
+
+{%- macro render_datetime(dt) -%}
+{%- if dt -%}
+{{ frappe.utils.format_datetime(dt, "d-MMM-Y") }}
+{%- endif -%}
+{%- endmacro -%}
+
+
+{%- macro render_money(amount) -%}
+{%- if amount -%}
+{{ frappe.utils.fmt_money(amount,currency="INR" ) }}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro render_conditional(cdn,field, label) -%}
+{%- if cdn.get(field,None)-%}
+{{ label }} {{ cdn.get(field) }}
+{%- endif -%}
+{%- endmacro -%}
+
+
+<style>
+    .invoice-title {
+        text-align: center
+    }
+
+    .invoice-title h2,
+    .invoice-title h3 {
+        margin: 0px;
+        display: inline-block;
+    }
+
+    .table {
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+
+    .table>tbody>tr>.no-line {
+        border-top: 0px;
+        border-bottom: 0px;
+    }
+
+    .table>thead>tr>.no-line {
+        border-bottom: 0px;
+        border-top: 0px;
+    }
+
+
+    .table>tbody>tr>td {
+        border-top: 0px;
+        border-bottom: 0px;
+    }
+
+    /* .table>tbody>tr>.thick-line {
+        border-top: 2px solid;
+    } */
+
+    .panel-body {
+        padding-bottom: 0px;
+        padding-top: 0px;
+    }
+
+    .print-format {
+        margin-top: 0mm;
+        margin-left: 0mm;
+        margin-right: 0mm;
+    }
+
+    .hr {
+        margin-block-start: 0em !important;
+        margin-block-end: 0em !important;
+    }
+
+    td.bold {
+        font-weight: bold
+    }
+</style>

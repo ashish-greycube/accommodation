@@ -1,0 +1,108 @@
+{% if room_items %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class=" col-lg-12 col-md-12 col-sm-12 description">
+                <div class="table-responsive">
+                    <table class="table table-condensed cart no-border">
+                        <thead>
+                            <tr>
+                                <td class="text-center">
+                                    <strong>Perticulars</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>No. of Room/Beds</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>Days</strong>
+                                </td>
+                                <td class="text-right">
+                                    <strong>Amount</strong>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in room_items %}
+                            <tr>
+                                <td class="text-left">{{row.room}}</td>
+                                <td class="text-left">
+                                    <strong>{{ frappe.utils.format_datetime(row.checkin_date, "d-MMM-Y HH:mm") }}</strong>
+                                </td>
+                                <td class="text-left">
+                                    <strong>{{ frappe.utils.format_datetime(row.checkout_date, "d-MMM-Y HH:mm") or ""
+                                        }}</strong>
+                                </td>
+                                <td class="text-center"><strong>{{ frappe.utils.cint(row.no_days) }}</strong></td>
+                                <td class="text-right"><strong>{{ frappe.utils.fmt_money(row.amount, currency="INR") }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="tax-net-total-row">
+                <hr>
+                <div class="col-xs-9 pull-left text-right strong;" >{{ _("Total Room Rent") }}</div>
+                <div class="col-xs-3 text-right">
+                    {{ frappe.utils.fmt_money(items_total, currency="INR") }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% if service_items %}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class=" col-lg-12 col-md-12 col-sm-12 description">
+                <div class="table-responsive">
+                    <table class="table table-condensed cart no-border">
+                        <thead>
+                            <tr>
+                                <td class="text-left">
+                                    <strong>Room No.</strong>
+                                </td>
+                                <td class="text-left">
+                                    <strong>Service</strong>
+                                </td>
+                                <td class="text-right">
+                                    <strong>Taxable Amount</strong>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in service_items %}
+                            <tr>
+                                <td class="text-left">{{row.room}}</td>
+                                <td class="text-left"><strong>{{ row.item }}</strong></td>
+                                <td class="text-right"><strong>{{ frappe.utils.fmt_money(row.amount, currency="INR") }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="tax-net-total-row">
+                <hr>
+
+                <div class="col-xs-9 pull-left text-right strong">{{ _("Total Services Amount") }}</div>
+                <div class="col-xs-3 text-right">
+                    {{ frappe.utils.fmt_money(services_total, currency="INR") }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endif %}
